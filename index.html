@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Renovation Planner</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="images/logo.png">
+</head>
+<body>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="screen-login" class="screen active">
+  <div class="login-wrapper">
+    <div class="login-card animate-in">
+      <div class="login-logo">
+        <img src="images/logo.png" alt="Renovation Planner">
+      </div>
+      <p class="login-subtitle">Estimating tool for building contractors</p>
+
+      <div class="form-group">
+        <label class="form-label" for="login-email">Email address</label>
+        <input type="email" id="login-email" class="form-input" value="demo@renovationplanner.co.uk">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="login-pass">Password</label>
+        <input type="password" id="login-pass" class="form-input" value="demo1234">
+      </div>
+
+      <button class="btn btn-primary btn-full btn-lg" onclick="doLogin()" style="margin-top:8px">
+        Sign In
+      </button>
+
+      <p style="text-align:center; margin-top:20px; font-size:0.8rem; color:var(--text-muted)">
+        Demo mode &mdash; credentials are pre-filled
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APP SHELL (sidebar + main) ==================== -->
+<div id="app-shell" class="app-shell" style="display:none">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="images/logo.png" alt="RP">
+        <span>Renovation Planner</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-nav="dashboard" onclick="navigateTo('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-nav="new-project" onclick="navigateTo('new-project')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        New Project
+      </button>
+      <button class="nav-item" data-nav="editor" onclick="navigateTo('editor')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Bill of Quantities
+      </button>
+      <button class="nav-item" data-nav="pdf-preview" onclick="navigateTo('pdf-preview')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        PDF Preview
+      </button>
+      <div class="nav-divider"></div>
+      <div class="nav-section-label">Admin</div>
+      <button class="nav-item" data-nav="admin-templates" onclick="navigateTo('admin-templates')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Templates
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar">DM</div>
+        <div>
+          <div class="user-name">Demo User</div>
+          <div class="user-role">Builder &middot; Pro Plan</div>
+        </div>
+      </div>
+      <button class="nav-item" onclick="doLogout()" style="margin-top:8px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- ===== DASHBOARD PAGE ===== -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Projects</div>
+          <div class="page-title-sub">Manage your renovation estimates</div>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <button class="btn btn-primary" onclick="navigateTo('new-project')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Project
+          </button>
+        </div>
+      </div>
+      <div class="page-body">
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Projects</div>
+            <div class="stat-value" id="stat-total">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Value</div>
+            <div class="stat-value" id="stat-value">&pound;0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">This Month</div>
+            <div class="stat-value" id="stat-month">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg Estimate</div>
+            <div class="stat-value" id="stat-avg">&pound;0</div>
+          </div>
+        </div>
+
+        <!-- Section Label -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <h3 style="font-size:0.9375rem; font-weight:700;">Recent Projects</h3>
+        </div>
+
+        <!-- Projects List -->
+        <div class="projects-list" id="projects-list"></div>
+      </div>
+    </div>
+
+    <!-- ===== NEW PROJECT PAGE ===== -->
+    <div id="page-new-project" class="page" style="display:none">
+      <div class="page-header">
+        <div>
+          <div class="page-title">New Project</div>
+          <div class="page-title-sub">Set up a new renovation estimate</div>
+        </div>
+        <button class="btn btn-secondary" onclick="navigateTo('dashboard')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back
+        </button>
+      </div>
+      <div class="page-body" style="max-width:800px">
+        <!-- Project Details -->
+        <div class="form-card">
+          <div class="form-card-title">Project Details</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="np-name">Project Name</label>
+              <input type="text" id="np-name" class="form-input" placeholder="e.g. 42 Oak Lane Extension">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="np-location">Location / Address</label>
+              <input type="text" id="np-location" class="form-input" placeholder="e.g. 42 Oak Lane, Bristol BS1 4DJ">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="np-client">Client Name</label>
+              <input type="text" id="np-client" class="form-input" placeholder="e.g. Mr & Mrs Smith">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="np-architect">Architect Name</label>
+              <input type="text" id="np-architect" class="form-input" placeholder="e.g. JBR Architecture">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="np-date">Date</label>
+              <input type="date" id="np-date" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="np-revision">Revision</label>
+              <input type="text" id="np-revision" class="form-input" value="00" placeholder="00">
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Type -->
+        <div class="form-card">
+          <div class="form-card-title">Project Type</div>
+          <div class="type-grid" id="type-grid">
+            <div class="type-card" data-type="new-build" onclick="selectType(this)">
+              <div class="type-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div class="type-card-name">New Build</div>
+              <div class="type-card-desc">Full construction</div>
+            </div>
+            <div class="type-card" data-type="extension" onclick="selectType(this)">
+              <div class="type-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="10" height="14" rx="1"/><rect x="12" y="11" width="10" height="10" rx="1"/><path d="M7 2l5 5"/></svg>
+              </div>
+              <div class="type-card-name">Extension</div>
+              <div class="type-card-desc">Addition to existing</div>
+            </div>
+            <div class="type-card" data-type="loft-conversion" onclick="selectType(this)">
+              <div class="type-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 22 8.5 22 22 2 22 2 8.5"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+              </div>
+              <div class="type-card-name">Loft Conversion</div>
+              <div class="type-card-desc">Roof space</div>
+            </div>
+            <div class="type-card" data-type="garage-conversion" onclick="selectType(this)">
+              <div class="type-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="14" rx="1"/><path d="M3 8l9-6 9 6"/><rect x="7" y="14" width="10" height="8" rx="0"/></svg>
+              </div>
+              <div class="type-card-name">Garage Conversion</div>
+              <div class="type-card-desc">Ground floor</div>
+            </div>
+            <div class="type-card" data-type="kitchen-refit" onclick="selectType(this)">
+              <div class="type-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/><circle cx="7" cy="8" r="1"/><circle cx="12" cy="8" r="1"/></svg>
+              </div>
+              <div class="type-card-name">Kitchen Refit</div>
+              <div class="type-card-desc">Kitchen renovation</div>
+            </div>
+            <div class="type-card" data-type="bathroom-refit" onclick="selectType(this)">
+              <div class="type-card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1z"/><path d="M6 12V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1"/></svg>
+              </div>
+              <div class="type-card-name">Bathroom Refit</div>
+              <div class="type-card-desc">Bathroom renovation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Button -->
+        <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:8px">
+          <button class="btn btn-secondary" onclick="navigateTo('dashboard')">Cancel</button>
+          <button class="btn btn-primary btn-lg" onclick="createProject()">
+            Create Project
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EDITOR PAGE ===== -->
+    <div id="page-editor" class="page" style="display:none">
+      <div class="page-header">
+        <div>
+          <div class="page-title" id="editor-title">Bill of Quantities</div>
+          <div class="page-title-sub" id="editor-subtitle">Edit line items and quantities</div>
+        </div>
+        <div style="display:flex; gap:8px">
+          <button class="btn btn-secondary" onclick="navigateTo('dashboard')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back
+          </button>
+          <button class="btn btn-accent" onclick="navigateTo('pdf-preview')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Export PDF
+          </button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="editor-layout">
+          <div class="editor-main" id="editor-sections">
+            <!-- Sections rendered by JS -->
+          </div>
+          <div class="editor-sidebar">
+            <div class="sticky-panel">
+              <!-- Markup -->
+              <div class="summary-card">
+                <div class="summary-title">Markup</div>
+                <div class="markup-control">
+                  <label for="markup-pct">Percentage</label>
+                  <input type="number" id="markup-pct" class="markup-input" value="125" min="100" step="5" onchange="updateMarkup()">
+                  <span style="font-size:0.875rem; color:var(--text-secondary); font-weight:600">%</span>
+                </div>
+                <div style="font-size:0.75rem; color:var(--text-muted)">Applied to all unit costs. 100% = no markup.</div>
+              </div>
+
+              <!-- Summary -->
+              <div class="summary-card">
+                <div class="summary-title">Estimate Summary</div>
+                <div id="summary-sections">
+                  <!-- Rendered by JS -->
+                </div>
+                <div class="summary-total">
+                  <span class="summary-total-label">Grand Total</span>
+                  <span class="summary-total-value" id="grand-total">&pound;0.00</span>
+                </div>
+              </div>
+
+              <!-- Notes -->
+              <div class="summary-card">
+                <div class="summary-title">Notes &amp; Exclusions</div>
+                <textarea class="notes-textarea" id="notes-field" placeholder="Add notes, exclusions, or assumptions..." oninput="saveCurrentProject()"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PDF PREVIEW PAGE ===== -->
+    <div id="page-pdf-preview" class="page" style="display:none">
+      <div class="page-header">
+        <div>
+          <div class="page-title">PDF Preview</div>
+          <div class="page-title-sub">Preview your estimate document</div>
+        </div>
+        <div style="display:flex; gap:8px">
+          <button class="btn btn-secondary" onclick="navigateTo('editor')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            Back to Editor
+          </button>
+          <button class="btn btn-accent">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </button>
+        </div>
+      </div>
+      <div class="page-body">
+        <div class="pdf-preview-wrapper">
+          <div class="pdf-page" id="pdf-content">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN: TEMPLATE LIST PAGE ===== -->
+    <div id="page-admin-templates" class="page" style="display:none">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Templates</div>
+          <div class="page-title-sub">Manage pre-built project templates</div>
+        </div>
+        <div style="display:flex; gap:8px">
+          <button class="btn btn-secondary" onclick="resetTemplatesToDefaults()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Reset to Defaults
+          </button>
+          <button class="btn btn-accent" onclick="exportTemplatesJson()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export JSON
+          </button>
+        </div>
+      </div>
+      <div class="page-body" style="max-width:800px">
+        <div class="type-grid" id="admin-templates-grid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN: TEMPLATE EDITOR PAGE ===== -->
+    <div id="page-admin-editor" class="page" style="display:none">
+      <div class="page-header">
+        <div>
+          <div class="page-title" id="admin-editor-title">Template Editor</div>
+          <div class="page-title-sub" id="admin-editor-subtitle">Edit items, costs, and related costs</div>
+        </div>
+        <button class="btn btn-secondary" onclick="navigateTo('admin-templates')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back
+        </button>
+      </div>
+      <div class="page-body">
+        <!-- Column headers -->
+        <div class="admin-item-row admin-item-header">
+          <div></div>
+          <div>Description</div>
+          <div>Cost</div>
+          <div>Unit</div>
+          <div>Related Costs</div>
+          <div></div>
+          <div></div>
+        </div>
+        <div id="admin-editor-sections">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Delete modal -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <div class="modal-title">Delete Project</div>
+    <div class="modal-text">Are you sure you want to delete this project? This action cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirm-delete-btn" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Line Item modal -->
+<div class="modal-overlay" id="add-item-modal">
+  <div class="modal">
+    <div class="modal-title">Add Line Item</div>
+    <div class="modal-text" style="margin-bottom:16px">Add a new item to section <strong id="add-item-section-label"></strong></div>
+    <div class="modal-form-group">
+      <label for="ai-desc">Description</label>
+      <input type="text" id="ai-desc" placeholder="e.g. 12.5mm plasterboard finish">
+    </div>
+    <div class="modal-form-row">
+      <div class="modal-form-group">
+        <label for="ai-unit">Unit</label>
+        <select id="ai-unit">
+          <option value="m²">m² (area)</option>
+          <option value="m">m (linear)</option>
+          <option value="m³">m³ (volume)</option>
+          <option value="nr" selected>nr (count)</option>
+          <option value="kg">kg (weight)</option>
+          <option value="riser">riser</option>
+          <option value="item">item</option>
+          <option value="p/s">p/s (provisional sum)</option>
+          <option value="sum">sum (lump sum)</option>
+        </select>
+      </div>
+      <div class="modal-form-group">
+        <label for="ai-cost">Unit Cost (&pound;)</label>
+        <input type="number" id="ai-cost" placeholder="0.00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="modal-form-group">
+      <label for="ai-subsection">Subsection</label>
+      <select id="ai-subsection" onchange="onSubsectionSelectChange()">
+        <option value="">(No subsection)</option>
+      </select>
+    </div>
+    <div class="modal-form-group" id="ai-new-subsection-row" style="display:none">
+      <label for="ai-new-subsection">New Subsection Name</label>
+      <input type="text" id="ai-new-subsection" placeholder="e.g. Concrete, Roofing, Doors">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeAddItemModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Subsection modal -->
+<div class="modal-overlay" id="add-subsection-modal">
+  <div class="modal">
+    <div class="modal-title">Add Subsection</div>
+    <div class="modal-text" style="margin-bottom:16px">Add a new subsection to <strong id="add-sub-section-label"></strong></div>
+    <div class="modal-form-group">
+      <label for="asub-name">Subsection Name</label>
+      <input type="text" id="asub-name" placeholder="e.g. Concrete, Blockwork, Timber Framing">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeAddSubsectionModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddSubsection()">Add Subsection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Remove Subsection confirm modal -->
+<div class="modal-overlay" id="remove-subsection-modal">
+  <div class="modal">
+    <div class="modal-title">Remove Subsection</div>
+    <div class="modal-text">This will remove <strong id="remove-sub-label"></strong> and all its line items. Are you sure?</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeRemoveSubsectionModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmRemoveSubsection()">Remove</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Section modal -->
+<div class="modal-overlay" id="add-section-modal">
+  <div class="modal">
+    <div class="modal-title">Add Section</div>
+    <div class="modal-text" style="margin-bottom:16px">Add a new trade section to this estimate.</div>
+    <div class="modal-form-row">
+      <div class="modal-form-group">
+        <label for="as-letter">Section Letter</label>
+        <input type="text" id="as-letter" placeholder="e.g. H" maxlength="2" style="text-transform:uppercase">
+      </div>
+      <div class="modal-form-group">
+        <label for="as-name">Section Name</label>
+        <input type="text" id="as-name" placeholder="e.g. LANDSCAPING">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeAddSectionModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAddSection()">Add Section</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin: Add/Edit Template Item modal -->
+<div class="modal-overlay" id="admin-item-modal">
+  <div class="modal">
+    <div class="modal-title" id="admin-item-modal-title">Add Template Item</div>
+    <div class="modal-text" style="margin-bottom:16px">Section <strong id="admin-item-section-label"></strong></div>
+    <div class="modal-form-group">
+      <label for="ati-desc">Description</label>
+      <input type="text" id="ati-desc" placeholder="e.g. 12.5mm plasterboard finish">
+    </div>
+    <div class="modal-form-row">
+      <div class="modal-form-group">
+        <label for="ati-unit">Unit</label>
+        <select id="ati-unit">
+          <option value="m²">m² (area)</option>
+          <option value="m">m (linear)</option>
+          <option value="m³">m³ (volume)</option>
+          <option value="nr" selected>nr (count)</option>
+          <option value="kg">kg (weight)</option>
+          <option value="riser">riser</option>
+          <option value="item">item</option>
+          <option value="p/s">p/s (provisional sum)</option>
+          <option value="sum">sum (lump sum)</option>
+        </select>
+      </div>
+      <div class="modal-form-group">
+        <label for="ati-cost">Unit Cost (&pound;)</label>
+        <input type="number" id="ati-cost" placeholder="0.00" min="0" step="0.01">
+      </div>
+    </div>
+    <div class="modal-form-group">
+      <label for="ati-subsection">Subsection</label>
+      <select id="ati-subsection" onchange="onAdminSubsectionSelectChange()">
+        <option value="">(No subsection)</option>
+      </select>
+    </div>
+    <div class="modal-form-group" id="ati-new-subsection-row" style="display:none">
+      <label for="ati-new-subsection">New Subsection Name</label>
+      <input type="text" id="ati-new-subsection" placeholder="e.g. Concrete, Roofing, Doors">
+    </div>
+    <div class="modal-form-group">
+      <label for="ati-related">Related / Knock-on Costs</label>
+      <input type="text" id="ati-related" placeholder="e.g. requires crane hire, skip needed">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeAdminItemModal()">Cancel</button>
+      <button class="btn btn-primary" id="admin-item-save-btn" onclick="confirmAdminItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin: Add Section modal -->
+<div class="modal-overlay" id="admin-section-modal">
+  <div class="modal">
+    <div class="modal-title">Add Section</div>
+    <div class="modal-text" style="margin-bottom:16px">Add a new trade section to this template.</div>
+    <div class="modal-form-row">
+      <div class="modal-form-group">
+        <label for="ats-letter">Section Letter</label>
+        <input type="text" id="ats-letter" placeholder="e.g. H" maxlength="2" style="text-transform:uppercase">
+      </div>
+      <div class="modal-form-group">
+        <label for="ats-name">Section Name</label>
+        <input type="text" id="ats-name" placeholder="e.g. LANDSCAPING">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeAdminSectionModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAdminSection()">Add Section</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin: Add Subsection modal -->
+<div class="modal-overlay" id="admin-subsection-modal">
+  <div class="modal">
+    <div class="modal-title">Add Subsection</div>
+    <div class="modal-text" style="margin-bottom:16px">Add a new subsection to <strong id="admin-sub-section-label"></strong></div>
+    <div class="modal-form-group">
+      <label for="atsub-name">Subsection Name</label>
+      <input type="text" id="atsub-name" placeholder="e.g. Concrete, Blockwork, Timber Framing">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeAdminSubsectionModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAdminSubsection()">Add Subsection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin: Confirm Delete modal -->
+<div class="modal-overlay" id="admin-confirm-delete-modal">
+  <div class="modal">
+    <div class="modal-title">Confirm</div>
+    <div class="modal-text" id="admin-confirm-delete-text">Are you sure?</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeAdminConfirmDelete()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmAdminDelete()">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script src="templates-data.js"></script>
+<script src="app.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
